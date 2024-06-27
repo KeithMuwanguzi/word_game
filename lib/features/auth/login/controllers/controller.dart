@@ -5,7 +5,8 @@ class LoginController extends GetxController {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   var isVisible = true.obs;
-  final GlobalKey<FormState> key = GlobalKey<FormState>();
+  GlobalKey<FormState> key = GlobalKey<FormState>();
+  GlobalKey<FormState> webKey = GlobalKey<FormState>();
 
   String? validateEmail(String? email) {
     if (email == null || email.isEmpty) {

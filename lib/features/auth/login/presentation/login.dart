@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:word_game/core/firebase_service.dart';
 import 'package:word_game/core/utils/font_styles.dart';
 import 'package:word_game/core/utils/size_utils.dart';
 import 'package:word_game/features/auth/login/controllers/controller.dart';
@@ -9,52 +10,54 @@ import 'package:word_game/widgets/custom_elevated_button.dart';
 import 'package:word_game/widgets/custom_text_field.dart';
 
 class LoginPage extends StatelessWidget {
-  final DeviceType deviceType;
-  const LoginPage({super.key, required this.deviceType});
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
-    if (deviceType == DeviceType.tablet) {
-      var leftRightPad = 50.h;
-      // Tablet and Web layout
-      return Row(
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.blue,
-              child: Center(
-                child: Text(
-                  'Welcome to the Word Game',
-                  style: GoogleFonts.roboto(
-                      color: Colors.white, fontSize: 24.fSize),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: LoginForm(
-              controller: controller,
-              pad: leftRightPad,
-              deviceType: DeviceType.tablet,
-            ),
-          ),
-        ],
-      );
-    } else if (deviceType == DeviceType.mobile) {
-      // Mobile layout
-      return Center(
-        child: LoginForm(
-          controller: controller,
-          pad: 35.h,
-          deviceType: DeviceType.mobile,
-        ),
-      );
-    } else {
-      return const Center(
-        child: Text("Under Development"),
-      );
-    }
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return Scaffold(
+          body: (deviceType == DeviceType.tablet)
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        color: Colors.blue,
+                        child: Center(
+                          child: Text(
+                            'Welcome to the Word Game',
+                            style: GoogleFonts.roboto(
+                                color: Colors.white, fontSize: 24.fSize),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: LoginForm(
+                        controller: controller,
+                        pad: 50.h,
+                        deviceType: DeviceType.tablet,
+                      ),
+                    ),
+                  ],
+                )
+              : (deviceType == DeviceType.mobile)
+                  ?
+                  // Mobile layout
+                  Center(
+                      child: LoginForm(
+                        controller: controller,
+                        pad: 35.h,
+                        deviceType: DeviceType.mobile,
+                      ),
+                    )
+                  : const Center(
+                      child: Text("Under Development"),
+                    ),
+        );
+      },
+    );
   }
 }
 
@@ -154,7 +157,13 @@ class LoginForm extends StatelessWidget {
                     CustomButton(
                       text: 'Sign In',
                       height: getButtonSize(deviceType),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (controller.key.currentState!.validate()) {
+                          AuthController.instance.signIn(
+                              controller.email.text.trim(),
+                              controller.password.text.trim());
+                        }
+                      },
                       textStyle: GoogleFonts.roboto(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
@@ -192,7 +201,7 @@ class LoginForm extends StatelessWidget {
                         height: getMediumSizes(deviceType),
                       ),
                     ),
-                    SizedBox(height: 20.v),
+                    SizedBox(height: 10.v),
                     CustomElevatedButton(
                       text: "Sign in with Twitter",
                       size: getSmallFont(deviceType),
@@ -202,6 +211,36 @@ class LoginForm extends StatelessWidget {
                         'assets/images/x.png',
                         height: getMediumSizes(deviceType),
                       ),
+                    ),
+                    SizedBox(height: 10.v),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account? ",
+                          style: GoogleFonts.roboto(
+                            fontSize: getUltraSmallFont(deviceType),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (controller.key.currentState!.validate()) {
+                              AuthController.instance.signUp(
+                                  controller.email.text.trim(),
+                                  controller.password.text.trim());
+                            }
+                          },
+                          child: Text(
+                            "Sign Up",
+                            style: GoogleFonts.roboto(
+                              fontSize: getSmallFont(deviceType),
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

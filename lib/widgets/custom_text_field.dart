@@ -45,12 +45,10 @@ class NormalTextField extends StatelessWidget {
           validator: validate,
           decoration: InputDecoration(
             hintText: hintText,
-            label: Text(labelText),
             hintStyle: GoogleFonts.roboto(
               fontSize: 14.fSize,
               color: Colors.black,
             ),
-            labelStyle: textStyle,
             contentPadding: EdgeInsets.symmetric(horizontal: 20.h),
             border: InputBorder.none,
           ),
@@ -118,8 +116,8 @@ class PasswordTextField extends StatelessWidget {
                       size: iconSize,
                     ),
             ),
-            label: Text(labelText),
-            labelStyle: textStyle,
+            hintText: labelText,
+            hintStyle: textStyle,
             contentPadding: EdgeInsets.symmetric(horizontal: 20.h),
             border: InputBorder.none,
           ),
